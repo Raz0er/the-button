@@ -1,4 +1,4 @@
-name: Pipeline CI
+name: Python CI
 
 on:
   push:
@@ -23,12 +23,24 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install flake8
+        pip install flake8 coverage
     
     - name: Lint with flake8
       run: |
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_report.txt
     
-    - name: Run tests
+    - name: Run tests with coverage
       run: |
-        python manage.py test
+        coverage run --source=. manage.py test
+        coverage report -m > coverage_report.txt
+        coverage html
+    
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: |
+          flake8_report.txt
+          coverage_report.txt
+          htmlcov/
