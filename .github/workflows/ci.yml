@@ -63,13 +63,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and test Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: false
           tags: the-button:${{ github.sha }}
           load: true
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'the-button:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          timeout: '5m'
 
       - name: Test Docker image
         run: |
