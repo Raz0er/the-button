@@ -132,3 +132,43 @@ jobs:
 
           docker push ${{ secrets.DOCKER_USERNAME }}/the-button:${SHORT_SHA}
           docker push ${{ secrets.DOCKER_USERNAME }}/the-button:latest
+
+  deploy-to-dev:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show environment variables
+        run: |
+          echo "Deploying to ${{ vars.ENVIRONMENT_NAME }} environment"
+          echo "Using token: ${{ secrets.DEPLOY_TOKEN != '' && '***' || 'Not set' }}"
+
+      - name: Mock deployment
+        run: |
+          echo "Starting deployment to development environment..."
+          sleep 5
+          echo "Deployment to development environment completed!"
+
+  deploy-to-production:
+    needs: deploy-to-dev
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show environment variables
+        run: |
+          echo "Deploying to ${{ vars.ENVIRONMENT_NAME }} environment"
+          echo "Using token: ${{ secrets.DEPLOY_TOKEN != '' && '***' || 'Not set' }}"
+
+      - name: Mock deployment
+        run: |
+          echo "Starting deployment to production environment..."
+          sleep 10
+          echo "Deployment to production environment completed!"
