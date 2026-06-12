@@ -1,8 +1,8 @@
 services: 
   django-web:
-   build: .
-   container_name: the_button_app
-   ports:
-     - "8000:8000"
-   environment:
-     DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  image: ${DOCKER_USERNAME}/the-button:${TAG}
+  container_name: the_button_app
+  ports:
+    - "8000:8000"
+  environment:
+    DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
