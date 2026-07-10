@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ master ]
   workflow_dispatch:
-  inputs:
+   inputs:
       version_type:
         description: "Version bump type"
         required: true
