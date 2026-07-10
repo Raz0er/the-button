@@ -6,9 +6,19 @@ on:
   pull_request:
     branches: [ master ]
   workflow_dispatch:
+  inputs:
+      version_type:
+        description: "Version bump type"
+        required: true
+        default: "minor"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
-  contents: read
+  contents: write
   security-events: write
   actions: read
 
