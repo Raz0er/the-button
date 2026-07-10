@@ -1,6 +1,6 @@
 services:
   django-web:
-    image: ${DOCKER_USERNAME}/the-button:${TAG}
+    image: nginx:latest
     container_name: the_button_app
     ports:
       - "8000:8000"
