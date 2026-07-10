@@ -251,35 +251,34 @@ jobs:
         run: |
           echo "Starting deployment of version $TAG to EC2..."
           ./.github/scripts/deploy.sh $IMAGE_NAME $TAG $EC2_HOST $EC2_USER $ENV_NAME
-          
+
   smoke-tests:
-  needs: deploy-to-production
-  runs-on: ubuntu-latest
-  environment: production
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Prepare test script
-      run: |
-        chmod +x ./.github/scripts/smoke-tests.sh
-        
-    - name: Run smoke tests
-      env:
-        APP_URL: http://${{ secrets.EC2_HOST }}:8000
-      run: |
-        echo "Running smoke tests..."
-        ./.github/scripts/smoke-tests.sh $APP_URL
-        
-    - name: Send notification on success
-      if: success()
-      run: |
-        echo "Deployment and tests completed successfully!"
-        curl -X POST -H "Content-Type: application/json" -d '{"status":"success","message":"Deployment and tests completed successfully!"}' ${{ secrets.WEBHOOK_URL }}
-        
-    - name: Send alert on failure
-      if: failure()
-      run: |
-        echo "Smoke tests failed! Check the logs."
-        curl -X POST -H "Content-Type: application/json" -d '{"status":"failure","message":"Smoke tests failed! Check the logs."}' ${{ secrets.WEBHOOK_URL }}
-        
+    needs: deploy-to-production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Prepare test script
+        run: |
+          chmod +x ./.github/scripts/smoke-tests.sh
+
+      - name: Run smoke tests
+        env:
+          APP_URL: http://${{ secrets.EC2_HOST }}:8000
+        run: |
+          echo "Running smoke tests..."
+          ./.github/scripts/smoke-tests.sh $APP_URL
+
+      - name: Send notification on success
+        if: success()
+        run: |
+          echo "Deployment and tests completed successfully!"
+          curl -X POST -H "Content-Type: application/json" -d '{"status":"success","message":"Deployment and tests completed successfully!"}' ${{ secrets.WEBHOOK_URL }}
+
+      - name: Send alert on failure
+        if: failure()
+        run: |
+          echo "Smoke tests failed! Check the logs."
+          curl -X POST -H "Content-Type: application/json" -d '{"status":"failure","message":"Smoke tests failed! Check the logs."}' ${{ secrets.WEBHOOK_URL }}
